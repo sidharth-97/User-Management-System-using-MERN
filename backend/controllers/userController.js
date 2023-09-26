@@ -68,7 +68,7 @@ const getUserProfile = asyncHandler(async (req, res) => {
     const user = {
         _id: req.user._id,
         name: req.user.name,
-        email:req.user.email
+        email: req.user.email,
     }
     res.status(200).json(user)
 })
@@ -84,6 +84,7 @@ const updateUserProfile = asyncHandler(async (req, res) => {
         console.log(user)
         user.name = req.body.name || user.name
         user.email = req.body.email || user.email
+        user.image=req.body.imageSelected || user.image
         if (req.body.password) {
             user.password=req.body.password
         }

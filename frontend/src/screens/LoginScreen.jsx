@@ -1,11 +1,37 @@
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { useLoginMutation } from "../slices/usersApiSlice";
+import { setCredentials } from "../slices/authSlice";
+import { useDispatch, useSelector } from "react-redux";
+import {toast} from 'react-toastify'
 
 const LoginScreen = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+
+  const navigate = useNavigate()
+  const dispatch = useDispatch()
+  
+  const [login, { isLoading }] = useLoginMutation()
+  
+  const { userInfo } = useSelector((state) => state.auth)
+  
+  useEffect(() => {
+    if (userInfo) {
+      navigate('/')
+    }
+  },[navigate,userInfo])
+
   const submitHandler = async (e) => {
     e.preventDefault();
+    try {
+      const res = await login({ email, password }).unwrap()
+      dispatch(setCredentials({ ...res }))
+      toast.success('Logged successfully');
+      navigate('/')
+    } catch (err) {
+      toast.error(err?.data?.message || err.error);
+    }
   };
   return (
     <div className="bg-gray-200 min-h-screen flex items-center justify-center">
@@ -25,7 +51,7 @@ const LoginScreen = () => {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               id="email"
-              class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400  dark:focus:ring-blue-500 dark:focus:border-blue-500"
+              class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-400 dark:border-gray-600 dark:placeholder-gray-400  dark:focus:ring-blue-500 dark:focus:border-blue-500"
               placeholder="name@flowbite.com"
               required
             />
@@ -42,7 +68,7 @@ const LoginScreen = () => {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               id="password"
-              class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400  dark:focus:ring-blue-500 dark:focus:border-blue-500"
+              class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-400 dark:border-gray-600 dark:placeholder-gray-400  dark:focus:ring-blue-500 dark:focus:border-blue-500"
               required
             />
           </div>
