@@ -4,59 +4,64 @@ import { Link, useNavigate } from "react-router-dom";
 import { setCredentials } from "../slices/authSlice";
 import { useUpdateUserMutation } from "../slices/usersApiSlice";
 import Axios from 'axios'
-import {toast} from 'react-toastify'
-
+import { toast } from 'react-toastify'
 
 const ProfileScreen = () => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-    const [confirmPassword, setConfirmPassword] = useState("");
-    const [imageSelected,setImageSelected]=useState("")
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [imageSelected, setImageSelected] = useState("")
+  const [image, setImage] = useState("")
 
   const navigate = useNavigate()
   const dispatch = useDispatch()
-  
-    const { userInfo } = useSelector((state) => state.auth)
-    
-    const [updateProfile,{isLoading}]=useUpdateUserMutation()
-  
+
+  const { userInfo } = useSelector((state) => state.auth)
+
+  const [updateProfile, { isLoading }] = useUpdateUserMutation()
+
   useEffect(() => {
-      setName(userInfo.name)
-      setEmail(userInfo.email)
-  },[userInfo.setName,userInfo.setEmail])
+    setName(userInfo.name)
+    setEmail(userInfo.email)
+  }, [userInfo.name, userInfo.email])
 
   const submitHandler = async (e) => {
-      e.preventDefault();
-      uploadImage()
+    e.preventDefault();
+    await uploadImage(); 
+    console.log(image);
     if (password !== confirmPassword) {
       toast.error('Passwords do not match')
     } else {
-   try {
-       const res = await updateProfile({
-           _id: userInfo._id,
-           name,
-           email,
-           password,imageSelected
-       }).unwrap()
-     dispatch(setCredentials({ ...res }))
-     toast.success('Profile updated successfully');
-       navigate('/')
-   } catch (err) {
-    toast.error(err?.data?.message || err.error)
-   }
+      try {
+        const res = await updateProfile({
+          _id: userInfo._id,
+          name,
+          email,
+          password,
+          image:await uploadImage()
+        }).unwrap()
+        dispatch(setCredentials({ ...res }))
+        navigate('/')
+      } catch (err) {
+        toast.error(err?.data?.message || err.error)
+      }
     }
-    };
-    
-    const uploadImage = () => {
-        const formData = new FormData()
-        formData.append('file',imageSelected)
-        formData.append('upload_preset', 'h9inb1ae')
-        
-        Axios.post("https://api.cloudinary.com/v1_1/dne4av79d/image/upload", formData).then((res)=> {
-          setImageSelected(res.data.secure_url)
-        })
-}
+  };
+
+  const uploadImage = async () => {
+    try {
+      const formData = new FormData();
+      formData.append('file', imageSelected);
+      formData.append('upload_preset', 'h9inb1ae');
+
+      const res = await Axios.post("https://api.cloudinary.com/v1_1/dne4av79d/image/upload", formData);
+      const imageUrl = res.data.url;
+      return imageUrl
+    } catch (error) {
+      console.error("Error uploading image:", error);
+    }
+  };
 
   return (
     <div className="bg-gray-200 min-h-screen flex items-center justify-center">
@@ -121,10 +126,10 @@ const ProfileScreen = () => {
               Confirm Password
             </label>
             <input
-              type="confirmPassword"
+              type="password"
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
-              id="password"
+              id="cpassword"
               class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-400 dark:border-gray-600 dark:placeholder-gray-400  dark:focus:ring-blue-500 dark:focus:border-blue-500"
             />
           </div>
