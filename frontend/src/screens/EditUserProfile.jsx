@@ -1,12 +1,8 @@
 import React, { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { Link, useNavigate, useParams } from "react-router-dom";
-import { setCredentials } from "../slices/authSlice";
-
-import Axios from "axios";
+import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import { useGetUserMutation } from "../slices/adminApiSlice";
-import { useUpdateUserMutation } from "../slices/adminApiSlice";
+import { useUpdateuserMutation } from "../slices/adminApiSlice";
 
 const EditUserProfile = () => {
   const [name, setName] = useState("");
@@ -17,7 +13,7 @@ const EditUserProfile = () => {
 
   const navigate = useNavigate();
   const { id } = useParams();
-  console.log(id);
+
   const [getUserData] = useGetUserMutation();
 
   useEffect(() => {
@@ -34,20 +30,25 @@ const EditUserProfile = () => {
 
     getUser();
   }, [id, getUserData]);
-  const [updateProfile, { isLoading }] = useUpdateUserMutation();
+
+
+  const [updateProfile, { isLoading }] = useUpdateuserMutation();
+  
+
+  
   const submitHandler = async (e) => {
     e.preventDefault();
-
+    console.log(id, name, email, password, image);
     if (password !== confirmPassword) {
       toast.error("Passwords do not match");
     } else {
       try {
-        const res = await updateProfile({
-          _id: id._id,
+        await updateProfile({
+          id,
           name,
           email,
           password,
-          image
+          image,
         }).unwrap();
         navigate("/admin/user");
       } catch (err) {

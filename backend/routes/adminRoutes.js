@@ -11,7 +11,7 @@ router.post('/logout', logoutAdmin)
 router.get('/users',protectAdmin, getUsers)
 router.delete('/delete-user',protectAdmin, deleteUser)
 router.get('/user-details',protectAdmin, getUserProfiles)
-router.post('/edit-user',protectAdmin, updateUserData)
+router.put('/edit-user',protectAdmin, updateUserData)
 router.post('/add-user',protectAdmin,addUser)
 
 export default router

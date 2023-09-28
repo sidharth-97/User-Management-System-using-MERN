@@ -6,16 +6,19 @@ const Landing = () => {
   const { userInfo } = useSelector((state) => state.auth);
 
   return (
-    <div className='bg-gray-200 min-h-screen flex flex-col items-center pt-8'>
+    <div className='bg-gray-200 min-h-screen flex flex-col  items-center pt-8'>
       <div className='bg-white shadow-md rounded-md p-8 text-center'>
         <h1 className='text-2xl font-semibold mb-4'>Welcome to Our App</h1>
         {userInfo ? (
+          <div className=' flex flex-col justify-center items-center'>
+          { userInfo.image && <img className='w-20' src={userInfo.image} alt='img' /> }
           <p className='text-gray-600 mb-6'>Welcome, {userInfo.name}!</p>
+          </div>
         ) : (
           <p className='text-gray-600 mb-6'>Please log in or sign up to continue.</p>
         )}
 
-        <div className='flex justify-between'>
+        <div className='flex justify-center'>
           {userInfo ? (
             <Link to='/profile'>
               <button className='bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 focus:outline-none focus:ring focus:ring-blue-300'>

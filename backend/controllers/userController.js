@@ -14,6 +14,7 @@ const authUser = asyncHandler(async (req, res) => {
       _id: user._id,
       name: user.name,
       email: user.email,
+      image:user.image
     });
   } else {
     res.status(401);
@@ -80,7 +81,6 @@ const getUserProfile = asyncHandler(async (req, res) => {
 const updateUserProfile = asyncHandler(async (req, res) => {
   const user = await User.findOne(req.user._id);
   if (user) {
-    console.log(user);
     user.name = req.body.name || user.name;
     user.email = req.body.email || user.email;
     user.image = req.body.image || user.image;

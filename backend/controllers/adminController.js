@@ -65,7 +65,8 @@ const getUserProfiles = asyncHandler(async (req, res) => {
 
 
 const updateUserData = asyncHandler(async (req, res) => {
-    const user = await User.findOne({_id:req.body._id})
+    const user = await User.findOne({_id: req.body.id })
+    console.log("here");
     if (user) {
         console.log(user)
         user.name = req.body.name || user.name
